@@ -22,9 +22,6 @@ def FeatureMap2Heatmap(x, feature1, feature2):
     ## initial images
     ## initial images
     x = x.repeat(2,1,1,1,1)
-    # print(feature2.shape)
-    # feature1 = feature1.repeat(1,1,2,1,1)
-    # feature2 = feature2.repeat(1,1,2,1,1)
     org_img = x[0, :, 32, :, :].cpu()
     org_img = org_img.data.numpy() * 128 + 127.5
     org_img = org_img.transpose((1, 2, 0))
@@ -104,8 +101,6 @@ class AvgrageMeter(object):
 
 # main function
 def train(args):
-    # GPU  & log file  -->   if use DataParallel, please comment this command
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "%d" % (args.gpu)
     condition = args.version
     device_ids = args.gpu
     frames = args.frames
@@ -134,7 +129,6 @@ def train(args):
             log_file.flush()
 
             model = PhysNet_padding_ED_peak(frames = frames, device_ids = device_ids, hidden_layer = args.hidden_layer)
-            # model = PhysNet_peak_CD_old(theta = 1.0)
             
             model = torch.nn.DataParallel(model, device_ids=device_ids)
             model = model.cuda(device=device_ids[0])
@@ -150,7 +144,6 @@ def train(args):
             log_file.flush()
 
             model = PhysNet_padding_ED_peak(frames = frames, device_ids = device_ids, hidden_layer = args.hidden_layer)
-            # model = PhysNet_peak_CD_old(theta = 1.0)
             
             model = torch.nn.DataParallel(model, device_ids=device_ids)
             model = model.cuda(device=device_ids[0])
@@ -170,7 +163,6 @@ def train(args):
             model = PhysNet_padding_ED_peak(frames = frames, device_ids = device_ids, hidden_layer = args.hidden_layer)
             
             model = torch.nn.DataParallel(model, device_ids=device_ids)
-            # model = PhysNet_peak_CD_old(theta = 0.2)
 
             model = model.cuda(device=device_ids[0])
 
@@ -214,8 +206,8 @@ def train(args):
                 pin_memory=not args.cpu
             )
             for i, sample_batched in enumerate(dataloader_train):
-                inputs_1, ecg = sample_batched['video_x'].cuda(device=device_ids[0]), sample_batched['ecg'].cuda(device=device_ids[0])#其实这个UBFC数据集的GT是PPG信号，差的不多就不改这个ecg的命名了
-                inputs_2 = sample_batched['video_y'].cuda(device=device_ids[0])#此处有更改！！！！！！！
+                inputs_1, ecg = sample_batched['video_x'].cuda(device=device_ids[0]), sample_batched['ecg'].cuda(device=device_ids[0])
+                inputs_2 = sample_batched['video_y'].cuda(device=device_ids[0])
                 clip_average_HR, frame_rate = sample_batched['clip_average_HR'].cuda(device=device_ids[0]), sample_batched['frame_rate'].cuda(device=device_ids[0])
                 ecg_compare = torch.randn(ecg.shape[0]*2,ecg.shape[1]).cuda(device=device_ids[0])
 
@@ -236,7 +228,6 @@ def train(args):
                     rPPG_first[aa]=rPPG[aa]
                     rPPG_second[aa]=rPPG[aa+batch_size]
                 loss_between = between_loss(rPPG_first,rPPG_second)
-                # pdb.set_trace()
 
                 rPPG = (rPPG - torch.mean(rPPG)) / torch.std(rPPG)  # normalize2
                 ecg = (ecg - torch.mean(ecg)) / torch.std(ecg) 
@@ -246,14 +237,12 @@ def train(args):
                 fre_loss = 0.0
                 train_rmse = 0.0
 
-                # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
                 for bb in range(inputs_1.shape[0]+inputs_2.shape[0]):
                     fre_loss_temp, train_rmse_temp = TorchLossComputer.cross_entropy_power_spectrum_loss(rPPG[bb],clip_average_HR[bb],frame_rate[bb],device_ids)
                     fre_loss = fre_loss + fre_loss_temp
                     train_rmse = train_rmse + train_rmse_temp
                 fre_loss = fre_loss / (inputs_1.shape[0]+inputs_2.shape[0])
                 train_rmse = train_rmse / (inputs_1.shape[0]+inputs_2.shape[0])
-                # loss =  0.02*loss_rPPG + fre_loss
                 
                 if epoch > 20:
                     loss = loss_rPPG +fre_loss +0.1*loss_between
@@ -328,8 +317,6 @@ if __name__ == "__main__":
         args.scale = [1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0]
     else:
         args.scale = list(map(lambda x: float(x), args.scale.split('+')))
-    #for i in [0, 1, 2, 5]:
-        #train(i)
     if args.gpu=='':
         args.gpu = [0]
     else:

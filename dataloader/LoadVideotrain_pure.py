@@ -31,7 +31,6 @@ class RandomHorizontalFlip(object):
     """Horizontally flip the given Image randomly with a probability of 0.5."""
 
     def __call__(self, sample):
-        # print(2)
         video_x, video_y, clip_average_HR, ecg_label, frame_rate, scale= sample['video_x'], sample['video_y'], sample['clip_average_HR'], sample['ecg'], sample['frame_rate'], sample['scale']
 
         h, w = video_x.shape[1], video_x.shape[2]
@@ -40,7 +39,6 @@ class RandomHorizontalFlip(object):
         new_video_y = np.zeros((video_y.shape[0], h1, w1, 3))
         p = random.random()
         if p < 0.5:
-            # print('Flip')
             for i in range(video_x.shape[0]):
                 # video
                 image = video_x[i, :, :, :]
@@ -52,7 +50,6 @@ class RandomHorizontalFlip(object):
             return {'video_x': new_video_x, 'video_y': new_video_y, 'clip_average_HR': clip_average_HR, 'ecg': ecg_label, 'frame_rate': frame_rate, 'scale':scale}
 
         else:
-            # print('no Flip')
             return {'video_x': video_x, 'video_y': video_y, 'clip_average_HR': clip_average_HR, 'ecg': ecg_label, 'frame_rate': frame_rate, 'scale':scale}
 
 
@@ -64,7 +61,6 @@ class ToTensor(object):
     """
 
     def __call__(self, sample):
-        # video_x, video_y, clip_average_HR, ecg_label, frame_rate, scale= sample['video_x'], sample['video_y'], sample['clip_average_HR'], sample['ecg'], sample['frame_rate'], sample['scale']
         video_y = sample['video_y']
         video_x = sample['video_x']
 
@@ -72,10 +68,6 @@ class ToTensor(object):
         ecg_label = sample['ecg']
         frame_rate = sample['frame_rate']
         scale= sample['scale']
-        # print(1)
-        # swap color axis because
-        # numpy image: (batch_size) x depth x H x W x C
-        # torch image: (batch_size) x C x depth X H X W
         video_x = video_x.transpose((3, 0, 1, 2))
         video_x = np.array(video_x)
         video_y = video_y.transpose((3, 0, 1, 2))
@@ -122,8 +114,6 @@ class PURE_train(Dataset):
         for i in range(0,len(self.videoList)):
             tempPath = self.path_json + self.videoList[i] 
             segNum = int(len(os.listdir(tempPath + '/pic/')))//self.length
-            
-            #self.videoListFrameRate.append(videoCap.get(cv2.CAP_PROP_FPS))
             with open(tempPath + '/' +self.videoList[i] + ".json", 'r') as f:
                 data = json.load(f)
                 data = data["/FullPackage"]

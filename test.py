@@ -36,7 +36,7 @@ def FeatureMap2Heatmap(x, feature1, feature2):
     org_img = x[0, :, 32, :, :].cpu()
     org_img = org_img.data.numpy() * 128 + 127.5
     org_img = org_img.transpose((1, 2, 0))
-    # org_img = cv2.cvtColor(org_img, cv2.COLOR_BGR2RGB)
+
 
     cv2.imwrite(args.log + '/' + args.log + '_x_visual.jpg', org_img)
 
@@ -87,10 +87,6 @@ class Neg_Pearson(nn.Module):  # Pearson range [-1, 1] so if < 0, abs|loss| ; if
             pearson = (N * sum_xy - sum_x * sum_y) / (
                 torch.sqrt((N * sum_x2 - torch.pow(sum_x, 2)) * (N * sum_y2 - torch.pow(sum_y, 2))))
 
-            # if (pearson>=0).data.cpu().numpy():    # torch.cuda.ByteTensor -->  numpy
-            #    loss += 1 - pearson
-            # else:
-            #    loss += 1 - torch.abs(pearson)
 
             loss += 1 - pearson
 
@@ -115,8 +111,6 @@ class AvgrageMeter(object):
 
 
 def test(condition, scale):
-    # GPU  & log file  -->   if use DataParallel, please comment this command
-    # os.environ["CUDA_VISIBLE_DEVICES"] = "%d" % (args.gpu)
     condition = args.version
     device_ids = args.gpu
     frames = args.frames
@@ -125,9 +119,7 @@ def test(condition, scale):
         os.makedirs(args.log+ '/' + 'train_version' + str(condition)+ '_' +str(args.epochs))
     log_file = open(args.log + '/' + 'train_version' + str(condition) +  '_' +str(args.epochs) + '/'  +args.log + '_test_condition_' + 'scale'+ str(scale) + '_.txt', 'w')
 
-    # k-fold cross-validation
     for ik in range(0, 1):
-        # for ik in range(7, 10):
 
         index = ik + 1
 

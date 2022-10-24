@@ -118,8 +118,7 @@ class _ResumeIteration(object):
 # from https://github.com/numpy/numpy/blob/main/numpy/random/bit_generator.pyx
 # It's MIT licensed, here is the copyright:
 
-# Copyright (c) 2015 Melissa E. O'Neill
-# Copyright (c) 2019 NumPy Developers
+]
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
