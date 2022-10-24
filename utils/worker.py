@@ -1,8 +1,3 @@
-r""""Contains definitions of the methods used by the _BaseDataLoaderIter workers.
-These **needs** to be in global scope since Py2 doesn't support serializing
-static methods.
-"""
-
 import torch
 import random
 import os

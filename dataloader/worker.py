@@ -1,7 +1,3 @@
-r""""Contains definitions of the methods used by the _BaseDataLoaderIter workers.
-These **needs** to be in global scope since Py2 doesn't support serializing
-static methods.
-"""
 
 import torch
 import random
@@ -280,7 +276,6 @@ def _worker_loop(dataset_kind, dataset, index_queue, data_queue, done_event,
 
                 random.choice(r)
                 idx_scale_vice = random.choice(r)
-                # print(idx_scale)
                 dataset.set_scale(idx_scale,idx_scale_vice)
             data: Union[_IterableDatasetStopIteration, ExceptionWrapper]
             if init_exception is not None:

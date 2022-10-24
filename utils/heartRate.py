@@ -1,7 +1,4 @@
-from typing import no_type_check
 import numpy as np
-
-
 from scipy.interpolate import Akima1DInterpolator
 
 
@@ -18,7 +15,6 @@ def compute_power_spectrum(signal, Fs, zero_pad=None):
 
 
 def predict_heart_rate(signal, Fs, min_hr=40., max_hr=180., method='fast_ideal'):
-                      #ppg     30HZ
     if method == 'ideal':
         """ Zero-pad in time domain for ideal interp in freq domain
         """

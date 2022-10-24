@@ -1,7 +1,4 @@
 import torch
-import numpy as np
-# from torch.optim import SGD, Adam
-# from tensorboardX import SummaryWriter
 
 
 def make_coord(shape, ranges=None, flatten=True):

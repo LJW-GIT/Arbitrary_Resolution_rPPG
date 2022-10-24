@@ -1,9 +1,6 @@
-from __future__ import print_function, division
 import torch
 
-import matplotlib.pyplot as plt
 import argparse, os
-import pandas as pd
 import cv2
 import numpy as np
 from torchvision import transforms
@@ -14,7 +11,6 @@ from dataloader.LoadVideotrain_pure import PURE_train, Normaliztion, ToTensor, R
 
 from utils.TorchLossComputer import TorchLossComputer
 
-import torch.nn.functional as F
 import torch.nn as nn
 import torch.optim as optim
 
@@ -170,18 +166,12 @@ def train(args):
             optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=0.00005)
             scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.step_size, gamma=args.gamma)
 
-        criterion_Binary = nn.BCELoss()  # binary segmentation
 
         between_loss = nn.MSELoss()
-        criterion_L1loss = nn.L1Loss()
-        criterion_class = nn.CrossEntropyLoss()
         criterion_Pearson = Neg_Pearson()
 
-        weight_HR_reg = 0.5
-        weight_ECG = 10
         echo_batches = args.echo_batches
         scale = args.scale
-        fold_val_reg_loss = 10000
 
         # train
         for epoch in range(args.epochs):
@@ -203,7 +193,7 @@ def train(args):
                 PURE_trainDL,
                 batch_size=batch_size,
                 shuffle=True,
-                pin_memory=not args.cpu
+                pin_memory= True
             )
             for i, sample_batched in enumerate(dataloader_train):
                 inputs_1, ecg = sample_batched['video_x'].cuda(device=device_ids[0]), sample_batched['ecg'].cuda(device=device_ids[0])
@@ -311,7 +301,6 @@ if __name__ == "__main__":
     parser.add_argument('--n_threads', type=int, default=16,help='number of threads for data loading')
     parser.add_argument('--scale', type=str, default='', help='super resolution scale')
     parser.add_argument('--batch_size', type=int, default=1, help='batch_size')
-    parser.add_argument('--cpu', action='store_true',help='use cpu only')
     args = parser.parse_args()
     if args.scale=='':
         args.scale = [1.0,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0]

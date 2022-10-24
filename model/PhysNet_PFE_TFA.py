@@ -1,11 +1,8 @@
-import math
-from numpy.core.numeric import ones_like
+
 import torch.nn as nn
-from torch.nn.modules.utils import _triple
 import torch.nn.functional as F
 import torch
 from utils import utils
-import pdb
 from .TFA import TFA
 
 class MLP(nn.Module):
@@ -128,7 +125,7 @@ class PhysNet_padding_ED_peak(nn.Module):
         x = torch.cat([x,y],dim=0)
         x = self.ConvBlock2(x)  # x [32, T, 64,64]
         x_visual6464 = self.ConvBlock3(x)  # x [32, T, 64,64]
-        x = self.MaxpoolSpaTem(x_visual6464)  # x [32, T/2, 32,32]    Temporal halve
+        x = self.MaxpoolSpaTem(x_visual6464)  # x [32, T/2, 32,32]    Temporal half
 
         x = self.ConvBlock4(x)  # x [64, T/2, 32,32]
         x_visual3232 = self.ConvBlock5(x)  # x [64, T/2, 32,32]
@@ -143,8 +140,7 @@ class PhysNet_padding_ED_peak(nn.Module):
         x = self.upsample(x)  # x [64, T/2, 8, 8]
         x = self.upsample2(x)  # x [64, T, 8, 8]
 
-
-        x = self.poolspa(x)  # x [64, T, 1,1]    -->  groundtruth left and right - 7
+        x = self.poolspa(x)  # x [64, T, 1,1]
         x = self.ConvBlock10(x)  # x [1, T, 1,1]
 
         rPPG_peak = x.squeeze(-1).squeeze(-1)  # [Batch, 2, T]
@@ -155,7 +151,6 @@ class PhysNet_padding_ED_peak(nn.Module):
 
         [batch, channel, length, width, height] = x.shape
         imnet = self.mlp_x
-        # x = torch.randn(8, 64, 4, 4)
         coord = utils.make_coord([64,64]).cuda(device=self.device_ids[0])
 
         cell = torch.ones_like(coord)
@@ -164,7 +159,6 @@ class PhysNet_padding_ED_peak(nn.Module):
         cell[:, 1] *= 2 / output_size
         cell = cell.expand(batch*length,-1,-1)
         x = x.permute(0,2,1,3,4).contiguous().view(-1,channel,width,height)
-        # print(x.shape)
         ret = self.query_rgb(x, coord,cell=cell,imnet=imnet)
         ret = ret.permute(0,2,1).contiguous().view(batch*length,channel,output_size,output_size).view(batch,length,channel,output_size,output_size)
 
@@ -192,7 +186,7 @@ class PhysNet_padding_ED_peak(nn.Module):
         coord_ = coord.clone()
 
 
-        q_feat = F.grid_sample(         
+        q_feat = F.grid_sample(
             feat, coord_.flip(-1).unsqueeze(1),
             mode='nearest', align_corners=False)[:, :, 0, :].permute(0, 2, 1)
 

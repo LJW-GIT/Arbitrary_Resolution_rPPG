@@ -1,15 +1,10 @@
-from __future__ import print_function, division
 import os
 import torch
-import pandas as pd
 import cv2
 import numpy as np
 import random
 import torch
-from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
-import pdb
-import math
+from torch.utils.data import Dataset
 import json
 from scipy import interpolate
 from utils.heartRate import predict_heart_rate

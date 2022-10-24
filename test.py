@@ -1,29 +1,17 @@
-from __future__ import print_function, division
 import torch
 import matplotlib.pyplot as plt
 import argparse, os
-import pandas as pd
 import cv2
 import numpy as np
-import random
-import math
+
 
 from torchvision import transforms
-import scipy.io as sio
-
 from model.PhysNet_PFE_TFA import PhysNet_padding_ED_peak
 from dataloader.dataloader import MHDataLoader
 from dataloader.LoadVideotrain_pure import PURE_train, Normaliztion, ToTensor, RandomHorizontalFlip
 
-from utils.TorchLossComputer import TorchLossComputer
-
-
-import torch.nn.functional as F
-from torch.autograd import Variable
 import torch.nn as nn
-import torch.optim as optim
-import copy
-import pdb
+
 
 
 
