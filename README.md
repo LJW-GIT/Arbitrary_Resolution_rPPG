@@ -6,6 +6,10 @@ The code for paper <Learning Motion-Robust Remote Photoplethysmography through A
 pip install pip_list.txt
 ```
 ## Model training&testing
+Before running
+```
+Change the absolute path of the spynet_ in ./model/PhysNet_PFE_TFA.py line 106
+```
 For training the model
 ```
 python train.py --gpu --version 
@@ -17,6 +21,11 @@ python test.py --gpu --version --scale 1.0
 ```
 
 ## Dataset
+Prepare the dataset
+```
+cd dataset
+python data_deal_pure.py
+```
 Load the dataset
 ```
 Change the path to the dataset in ./dataloader/LoadVideotrain_pure.py line 104

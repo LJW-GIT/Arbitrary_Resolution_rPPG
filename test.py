@@ -13,10 +13,6 @@ from dataloader.LoadVideotrain_pure import PURE_train, Normaliztion, ToTensor, R
 import torch.nn as nn
 
 
-
-
-k = 5  
-
 def FeatureMap2Heatmap(x, feature1, feature2):
     ## initial images
     ## initial images

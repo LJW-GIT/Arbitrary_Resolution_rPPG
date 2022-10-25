@@ -103,7 +103,7 @@ class PhysNet_padding_ED_peak(nn.Module):
         self.upconv = nn.ConvTranspose3d(16, 16, [1, 5, 5], stride=[1,2,2], padding=[0, 2, 2])
         self.mlp_x = MLP(in_dim = imnet_in_dim, out_dim = 16 , hidden_list = [self.hidden_layer,self.hidden_layer])
         self.mlp_y = MLP(in_dim = imnet_in_dim, out_dim = 16 , hidden_list = [self.hidden_layer,self.hidden_layer])
-        self.tfa = TFA(num_feat=16, num_block=15, spynet_path='./spynet_.pth')
+        self.tfa = TFA(num_feat=16, num_block=15, spynet_path='absolute path of spynet_.pth')
 
     def forward(self, x, y):  # x [3, T, 128,128]
         x_visual = x
