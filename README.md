@@ -45,4 +45,4 @@ cd dataset
 python data_deal_pure.py
 ```
 
-The implementation of model PhysNet_PFE_TFA/PhysNet_PFE/Physformer_PFE_TFA_crcloss/Physformer_PFE_TFA/Physformer_PFE, the dataloader/preprocess of UBFC-rppg/COHFACE/UBFC-phys/UCLA-rppg will be submitted to Github.
+The implementation of model PhysNet_PFE_TFA, PhysNet_PFE, Physformer_PFE_TFA_crcloss, Physformer_PFE_TFA, Physformer_PFE, and the dataloader/preprocess of UBFC-rppg, COHFACE, UBFC-phys, UCLA-rppg will be submitted to Github.
