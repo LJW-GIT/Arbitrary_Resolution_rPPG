@@ -81,7 +81,7 @@ class SpyNet(nn.Module):
         ref = [self.preprocess(ref)]
         supp = [self.preprocess(supp)]
 
-        for level in range(5):
+        for level in range(3):
             ref.insert(0, F.avg_pool2d(input=ref[0], kernel_size=2, stride=2, count_include_pad=False))
             supp.insert(0, F.avg_pool2d(input=supp[0], kernel_size=2, stride=2, count_include_pad=False))
 
@@ -111,16 +111,11 @@ class SpyNet(nn.Module):
         assert ref.size() == supp.size()
 
         h, w = ref.size(2), ref.size(3)
-        w_floor = math.floor(math.ceil(w / 32.0) * 32.0)
-        h_floor = math.floor(math.ceil(h / 32.0) * 32.0)
-
-        ref = F.interpolate(input=ref, size=(h_floor, w_floor), mode='bilinear', align_corners=False)
-        supp = F.interpolate(input=supp, size=(h_floor, w_floor), mode='bilinear', align_corners=False)
 
         flow = F.interpolate(input=self.process(ref, supp), size=(h, w), mode='bilinear', align_corners=False)
 
-        flow[:, 0, :, :] *= float(w) / float(w_floor)
-        flow[:, 1, :, :] *= float(h) / float(h_floor)
+        flow[:, 0, :, :] *= float(w) / float(16)
+        flow[:, 1, :, :] *= float(h) / float(16)
 
         return flow
 
@@ -220,8 +215,10 @@ class TFA(nn.Module):
         # propagation
         self.backward_trunk = ConvResidualBlocks(num_feat + 3, num_feat, num_block)
         self.forward_trunk = ConvResidualBlocks(num_feat + 3, num_feat, num_block)
-        self.video_upsample = nn.Upsample(
-        size=[3,64,64], mode='trilinear', align_corners=False)
+        self.video_upsample_1 = nn.Upsample(
+        size=[3,16,16], mode='trilinear', align_corners=False)
+        self.video_upsample_2 = nn.Upsample(
+        size=[16,64,64], mode='trilinear', align_corners=False)        
         # reconstruction
         self.fusion = nn.Conv2d(num_feat * 2, num_feat, 1, 1, 0, bias=True)
 
@@ -240,7 +237,7 @@ class TFA(nn.Module):
         return flows_forward, flows_backward
 
     def forward(self, x):
-        x = self.video_upsample(x)
+        x = self.video_upsample_1(x)
         flows_forward, flows_backward = self.get_flow(x)
         b, n, _, h, w = x.size()       
         # backward branch
@@ -270,8 +267,9 @@ class TFA(nn.Module):
             out = torch.cat([out_l[i], feat_prop], dim=1)
             out = self.lrelu(self.fusion(out))
             out_l[i] = out
-
-        return torch.stack(out_l, dim=1)
+        out_put = torch.stack(out_l, dim=1)
+        out_put = self.video_upsample_2(out_put)
+        return out_put
 
 
 class ConvResidualBlocks(nn.Module):

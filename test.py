@@ -6,7 +6,7 @@ import numpy as np
 
 
 from torchvision import transforms
-from model.PhysNet_PFE_TFA import PhysNet_padding_ED_peak
+from model.PhysNet_PFE_TFA_crcloss import PhysNet_padding_ED_peak
 from dataloader.dataloader import MHDataLoader
 from dataloader.LoadVideotrain_pure import PURE_train, Normaliztion, ToTensor, RandomHorizontalFlip
 
