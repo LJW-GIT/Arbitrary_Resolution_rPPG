@@ -1,5 +1,7 @@
 # Learning-Motion-Robust-Remote-Photoplethysmography-through-Arbitrary-Resolution-Videos
-The code for paper __Learning Motion-Robust Remote Photoplethysmography through Arbitrary Resolution Videos__
+Main code of AAAI2023 paper "Learning Motion-Robust Remote Photoplethysmography through Arbitrary Resolution Videos"
+
+![image](overall3.png) 
 
 We propose two plug-andplay blocks (i.e., physiological signal feature extraction block
 (PFE) and temporal face alignment block (TFA)) to alleviate
@@ -44,5 +46,3 @@ The information of the PURE dataset please refer:
 cd dataset
 python data_deal_pure.py
 ```
-
-The implementation of model PhysNet_PFE_TFA, PhysNet_PFE, Physformer_PFE_TFA_crcloss, Physformer_PFE_TFA, Physformer_PFE, and the dataloader/preprocess of UBFC-rppg, COHFACE, UBFC-phys, UCLA-rppg will be submitted to Github.
